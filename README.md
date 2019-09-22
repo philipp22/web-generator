@@ -35,4 +35,4 @@ The following artifacts are generated
 
 ## Build
 
-To build and run the generator, run `mvn clean install exec:java`.
+To build and run the generator, run `mvn clean install exec:java -Ddir=<target dir>`. `<target-dir>` points to the root directory containing the target system. This is ignored at the moment but must be specified and will be used in future.
