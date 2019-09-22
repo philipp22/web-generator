@@ -4,12 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.philipp_kehrbusch.lib.maven</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-
   <groupId>com.philipp-kehrbusch.events</groupId>
   <artifactId>events-gen</artifactId>
   <version>1.0-SNAPSHOT</version>
