@@ -1,0 +1,10 @@
+@Domain
+domain User {
+	@GetOneBy
+	@Readonly
+	String username;
+	String email;
+	String passwordHash;
+	@Readonly
+	long registrationDate;
+}
