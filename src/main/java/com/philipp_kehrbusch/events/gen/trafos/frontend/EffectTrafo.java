@@ -2,23 +2,22 @@ package com.philipp_kehrbusch.events.gen.trafos.frontend;
 
 import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
-import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SingleTrafo(includeAnnotated = "Domain")
 public class EffectTrafo {
 
   @Transform
-  public void transform(CDClass domain, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomain domain, WebElements elements) {
     var name = domain.getName() + "ApiEffects";
     var imports = new ArrayList<String>();
     imports.add(String.format("import {%sApiService} from '@services/api/%s-api.service'",
@@ -62,7 +61,7 @@ public class EffectTrafo {
                     .build()));
   }
 
-  private CDAttribute createCreate(CDClass domain) {
+  private CDAttribute createCreate(RawDomain domain) {
     var create = new CDAttributeBuilder()
             .name("create$")
             .addAnnotation("@Effect()")
@@ -72,7 +71,7 @@ public class EffectTrafo {
     return create;
   }
 
-  private CDAttribute createLoadAll(CDClass domain) {
+  private CDAttribute createLoadAll(RawDomain domain) {
     var create = new CDAttributeBuilder()
             .name("loadAll$")
             .addAnnotation("@Effect()")

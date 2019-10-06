@@ -3,25 +3,25 @@ package com.philipp_kehrbusch.events.gen.trafos.backend;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.ImportUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @GlobalTrafo
 public class ConverterTrafo {
 
   @Transform
-  public void transform(List<CDClass> allDomains, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
     var domains = TrafoUtils.getDomains(allDomains);
     domains.forEach(domain -> {
       var imports = ImportUtil.getDefaultImports();
@@ -29,11 +29,13 @@ public class ConverterTrafo {
       imports.add(settings.getBasePackage(Targets.BACKEND) + ".domain.*");
       imports.add(settings.getBasePackage(Targets.BACKEND) + ".dto.*");
       imports.add("org.springframework.stereotype.Service");
+      imports.add("org.springframework.beans.factory.annotation.Autowired");
 
       // add DAOs
       imports.addAll(domain.getAttributes().stream()
               .filter(attr -> TrafoUtils.isTypeDomain(attr.getType(), domains))
-              .map(attr -> settings.getBasePackage(Targets.BACKEND) + ".dao." + attr.getType() + "DAO")
+              .map(attr -> settings.getBasePackage(Targets.BACKEND) + ".dao." +
+                      TrafoUtils.getPrimitiveType(attr.getType()) + "DAO")
               .collect(Collectors.toList()));
 
       var name = domain.getName() + "Converter";
@@ -47,9 +49,12 @@ public class ConverterTrafo {
                               .addInterface("IConverter<" + domain.getName() + ", " + domain.getName() + "DTO>")
                               .addAttributes(domain.getAttributes().stream()
                                       .filter(attr -> TrafoUtils.isTypeDomain(attr.getType(), domains))
-                                      .map(attr -> new CDAttributeBuilder()
-                                              .type(attr.getType() + "DAO")
-                                              .name(StringUtil.firstLower(attr.getType()) + "DAO")
+                                      .map(attr -> TrafoUtils.getPrimitiveType(attr.getType()))
+                                      .distinct()
+                                      .map(type -> new CDAttributeBuilder()
+                                              .type(type + "DAO")
+                                              .addModifier("private")
+                                              .name(StringUtil.firstLower(type) + "DAO")
                                               .addAnnotation("@Autowired")
                                               .build())
                                       .collect(Collectors.toList()))
@@ -60,7 +65,7 @@ public class ConverterTrafo {
     });
   }
 
-  private CDMethod createFromMethod(CDClass domain, List<CDClass> domains) {
+  private CDMethod createFromMethod(RawDomain domain, RawDomains domains) {
     var res = new CDMethodBuilder()
             .addModifier("public")
             .returnType(domain.getName())
@@ -76,7 +81,7 @@ public class ConverterTrafo {
     return res;
   }
 
-  private CDMethod createToMethod(CDClass domain, List<CDClass> domains) {
+  private CDMethod createToMethod(RawDomain domain, RawDomains domains) {
     var res = new CDMethodBuilder()
             .addModifier("public")
             .returnType(domain.getName() + "DTO")

@@ -3,6 +3,7 @@ package com.philipp_kehrbusch.events.gen.trafos.frontend;
 import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
@@ -11,6 +12,7 @@ import com.philipp_kehrbusch.gen.webdomain.target.cd.CDType;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import java.util.List;
 public class ActionTrafo {
 
   @Transform
-  public void transform(CDClass domain, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomain domain, WebElements elements, GeneratorSettings settings) {
     var actions = new ArrayList<CDClass>();
 
     // load by id
@@ -250,7 +252,7 @@ public class ActionTrafo {
                     .build()));
   }
 
-  private CDType createActions(CDClass domain) {
+  private CDType createActions(RawDomain domain) {
     var actions = new CDTypeBuilder()
             .name(domain.getName() + "Actions")
             .addModifier("export")
@@ -259,7 +261,7 @@ public class ActionTrafo {
     return actions;
   }
 
-  private CDEnum createActionTypes(CDClass domain) {
+  private CDEnum createActionTypes(RawDomain domain) {
     var types = new CDEnumBuilder()
             .name(domain.getName() + "ActionTypes")
             .addModifier("export")

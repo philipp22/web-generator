@@ -1,0 +1,7 @@
+@Domain
+domain Invitation {
+	@ManyToOne
+	Event event;
+	@ManyToOne
+	User receiver;
+}

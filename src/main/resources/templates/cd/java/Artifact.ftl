@@ -8,7 +8,7 @@ import ${import};
 	<#list class.annotations as annotation>
 		${annotation}
 	</#list>
-	<#list class.modifiers as modifier>${modifier} </#list>class ${class.name}
+	<#list class.modifiers as modifier>${modifier} </#list>class ${class.generatedName}
 	<#if class.superClass??>extends ${class.superClass}</#if>
 	<#if (class.interfaces?size > 0)>implements </#if>
 	<#list class.interfaces as interface>
@@ -19,7 +19,7 @@ import ${import};
 	</#list>
 
 	<#list class.constructors as constructor>
-		<#list class.modifiers as modifier>${modifier} </#list>${constructor.name}
+		<#list constructor.modifiers as modifier>${modifier} </#list>${constructor.name}
 		(
 		<#list constructor.arguments as arg>
 			<#if (arg_index > 0)>,</#if>${arg.type} ${arg.name}

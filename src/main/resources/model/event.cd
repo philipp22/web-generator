@@ -1,9 +1,18 @@
 @Domain
 domain Event {
 	String title;
+	@Text
 	String description;
 	String location;
 	long start;
+	@Text
+	String image ?;
+	@OneToMany
+	List<User> accepted;
+	@OneToMany
+	List<User> declined;
+	@OneToMany
+	List<User> ignored;
 }
 
 @Domain

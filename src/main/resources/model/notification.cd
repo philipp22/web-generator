@@ -1,0 +1,9 @@
+@Domain
+@NoRest
+domain Notification {
+	@ManyToOne
+	User user;
+	int type;
+	String title;
+	long linkedId;
+}

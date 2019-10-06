@@ -1,4 +1,5 @@
 @Domain
+@NoRest
 domain User {
 	@GetOneBy
 	@Readonly
@@ -7,4 +8,19 @@ domain User {
 	String passwordHash;
 	@Readonly
 	long registrationDate;
+	String profilePicture;
+	String displayName;
+	@ManyToMany
+	List<User> friends;
+
+	rest {
+		get: ReducedUser;
+	}
+}
+
+@DTO
+domain ReducedUser {
+	String username;
+	String profilePicture;
+	String displayName;
 }

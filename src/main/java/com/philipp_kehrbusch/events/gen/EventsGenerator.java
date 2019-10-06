@@ -19,12 +19,14 @@ public class EventsGenerator {
             .addTarget(Targets.FRONTEND, new Target(
                     Target.TYPESCRIPT,
                     "/home/philipp/Dokumente/programmierung/events/events-frontend-ng/src/app/gen",
+                    "/home/philipp/Dokumente/programmierung/events/events-frontend-ng/src/app",
                     FileNameResolvers.TYPESCRIPT,
                     "ts/Artifact.ftl",
                     ""))
             .addTarget(Targets.BACKEND, new Target(
                     Target.JAVA,
                     "/home/philipp/Dokumente/programmierung/events/events-backend-java/src/main/gen",
+                    "/home/philipp/Dokumente/programmierung/events/events-backend-java/src/main/java",
                     FileNameResolvers.JAVA,
                     "java/Artifact.ftl",
                     "com.philipp_kehrbusch.events"));

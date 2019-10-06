@@ -3,6 +3,7 @@ package com.philipp_kehrbusch.events.gen.trafos.backend;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
@@ -10,7 +11,9 @@ import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstructor;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.ImportUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 
@@ -21,9 +24,10 @@ import java.util.List;
 public class RestTrafo {
 
   @Transform
-  public void transform(List<CDClass> allDomains, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
     var domains = TrafoUtils.getDomains(allDomains);
     var imports = ImportUtil.getDefaultImports();
+    imports.add("javax.transaction.*");
     imports.add("org.springframework.web.bind.annotation.*");
     imports.add("com.philipp_kehrbusch.web.rte.*");
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".dao.*");
@@ -31,29 +35,32 @@ public class RestTrafo {
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".domain.*");
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".converter.*");
 
-    domains.forEach(domain -> {
-      var name = domain.getName() + "Controller";
-      elements.add(new WebElement(Targets.BACKEND, name, "rest", imports,
-              new CDArtifactBuilder()
-                      .name(name)
-                      .addClass(new CDClassBuilder()
+    domains.stream()
+            .filter(domain -> !TrafoUtils.hasAnnotation(domain, "NoRest"))
+            .forEach(domain -> {
+              var name = domain.getName() + "Controller";
+              elements.add(new WebElement(Targets.BACKEND, name, "rest", imports,
+                      new CDArtifactBuilder()
                               .name(name)
-                              .addModifier("public")
-                              .superClass(String.format("AbstractRestController<%s, %s, %s, %s>",
-                                      domain.getName(),
-                                      domain.getName() + "DTO",
-                                      domain.getName() + "DAO",
-                                      domain.getName() + "Converter"))
-                              .addAnnotation("@RestController")
-                              .addAnnotation("@RequestMapping(\"/api/v1/" + StringUtil.firstLower(domain.getName()) + "\")")
-                              .addConstructor(createConstructor(domain))
-                              .addMethods(createMethods(domain))
-                              .build())
-                      .build()));
-    });
+                              .addClass(new CDClassBuilder()
+                                      .name(name)
+                                      .addModifier("public")
+                                      .superClass(String.format("AbstractRestController<%s, %s, %s, %s>",
+                                              domain.getName(),
+                                              domain.getName() + "DTO",
+                                              domain.getName() + "DAO",
+                                              domain.getName() + "Converter"))
+                                      .addAnnotation("@RestController")
+                                      .addAnnotation("@Transactional")
+                                      .addAnnotation("@RequestMapping(\"/api/v1/" + StringUtil.firstLower(domain.getName()) + "\")")
+                                      .addConstructor(createConstructor(domain))
+                                      .addMethods(createMethods(domain))
+                                      .build())
+                              .build()));
+            });
   }
 
-  private CDConstructor createConstructor(CDClass domain) {
+  private CDConstructor createConstructor(RawDomain domain) {
     var constructor = new CDConstructorBuilder()
             .name(domain.getName() + "Controller")
             .addModifier("public")
@@ -71,7 +78,7 @@ public class RestTrafo {
     return constructor;
   }
 
-  private List<CDMethod> createMethods(CDClass domain) {
+  private List<CDMethod> createMethods(RawDomain domain) {
     var create = new CDMethodBuilder()
             .addModifier("public")
             .name("create")

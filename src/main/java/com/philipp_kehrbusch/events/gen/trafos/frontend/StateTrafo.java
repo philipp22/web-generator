@@ -9,22 +9,22 @@ import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDAttributeBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDConstantBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDInterfaceBuilder;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstant;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @GlobalTrafo
 public class StateTrafo {
 
   @Transform
-  public void transform(List<CDClass> domains, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomains domains, WebElements elements, GeneratorSettings settings) {
     domains = TrafoUtils.getDomains(domains);
     var name = "DomainState";
     var imports = new ArrayList<String>();
@@ -38,7 +38,7 @@ public class StateTrafo {
             .collect(Collectors.toList()));
     imports.addAll(domains.stream()
             .map(domain -> String.format("import {%sReducer, initial%sState} from '@redux/reducers/%s.reducer'",
-                    CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName()),
+                    CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, domain.getName()),
                     domain.getName(),
                     CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName())))
             .collect(Collectors.toList()));
@@ -61,7 +61,7 @@ public class StateTrafo {
                     .build()));
   }
 
-  private CDConstant createDomainReducers(List<CDClass> domains) {
+  private CDConstant createDomainReducers(RawDomains domains) {
     var reducers = new CDConstantBuilder()
             .name("domainReducers")
             .type("ActionReducer<DomainState>")
@@ -71,7 +71,7 @@ public class StateTrafo {
     return reducers;
   }
 
-  private CDConstant createInitialDomainState(List<CDClass> domains) {
+  private CDConstant createInitialDomainState(RawDomains domains) {
     var initialState = new CDConstantBuilder()
             .name("initialDomainState")
             .type("DomainState")

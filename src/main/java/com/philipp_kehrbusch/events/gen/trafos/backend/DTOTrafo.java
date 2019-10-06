@@ -3,6 +3,9 @@ package com.philipp_kehrbusch.events.gen.trafos.backend;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.builders.RawDomainBuilder;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
@@ -11,39 +14,48 @@ import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstructor;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.ImportUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.MethodUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@GlobalTrafo
+@GlobalTrafo(includeAnnotated = {"Domain", "DTO"})
 public class DTOTrafo {
 
-  private CDAttribute createAttribute(CDAttribute attribute, List<CDClass> domains) {
+  private CDAttribute createAttribute(RawAttribute attribute, RawDomains domains) {
     if (TrafoUtils.isTypeDomain(attribute.getType(), domains)) {
-      return new CDAttributeBuilder().type("long").name(attribute.getName() + "Id").build();
+      return new CDAttributeBuilder()
+              .type(TrafoUtils.isTypeCollection(attribute.getType()) ?
+                      TrafoUtils.getLongCollection(attribute.getType()) : "long")
+              .name(attribute.getName())
+              .build();
     } else {
       return new CDAttributeBuilder().type(attribute.getType()).name(attribute.getName()).build();
     }
   }
 
-  private CDMethod createGetter(CDAttribute attribute, List<CDClass> domains) {
+  private CDMethod createGetter(RawAttribute attribute, RawDomains domains) {
+    var type = TrafoUtils.isTypeCollection(attribute.getType()) ?
+            TrafoUtils.getLongCollection(attribute.getType()) : "long";
     return MethodUtil.createGetter(
-            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? "long" : attribute.getType(),
-            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? attribute.getName() + "Id" : attribute.getName());
+            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? type : attribute.getType(),
+            attribute.getName());
   }
 
-  private CDMethod createSetter(CDAttribute attribute, List<CDClass> domains) {
+  private CDMethod createSetter(RawAttribute attribute, RawDomains domains) {
+    var type = TrafoUtils.isTypeCollection(attribute.getType()) ?
+            TrafoUtils.getLongCollection(attribute.getType()) : "long";
     return MethodUtil.createSetter(
-            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? "long" : attribute.getType(),
-            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? attribute.getName() + "Id" : attribute.getName()
-    );
+            TrafoUtils.isTypeDomain(attribute.getType(), domains) ? type : attribute.getType(),
+            attribute.getName());
   }
 
   @Transform
-  public void transform(List<CDClass> allDomains, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
     var domains = TrafoUtils.getDomains(allDomains);
     var imports = ImportUtil.getDefaultImports();
     imports.add("com.philipp_kehrbusch.web.rte.*");
@@ -77,14 +89,16 @@ public class DTOTrafo {
     });
   }
 
-  private CDConstructor createConstructor(CDClass domain, List<CDClass> domains) {
+  private CDConstructor createConstructor(RawDomain domain, RawDomains domains) {
     var res = new CDConstructorBuilder()
             .addModifier("public")
             .name(domain.getName() + "DTO")
             .addArguments(domain.getAttributes().stream()
                     .map(attr -> new CDArgumentBuilder()
-                            .type(TrafoUtils.isTypeDomain(attr.getType(), domains) ? "long" : attr.getType())
-                            .name(TrafoUtils.isTypeDomain(attr.getType(), domains) ? attr.getName() + "Id" : attr.getName())
+                            .type(TrafoUtils.isTypeDomain(attr.getType(), domains) ?
+                                    (TrafoUtils.isTypeCollection(attr.getType()) ?
+                                            TrafoUtils.getLongCollection(attr.getType()) : "long") : attr.getType())
+                            .name(attr.getName())
                             .build())
                     .collect(Collectors.toList()))
             .build();

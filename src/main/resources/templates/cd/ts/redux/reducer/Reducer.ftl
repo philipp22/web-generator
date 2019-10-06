@@ -4,12 +4,14 @@ ${tc.signature("domainName")}
       case ${domainName}ActionTypes.${domainName}Loaded:
           return ${domainName?uncap_first}Adapter.upsertMany((action as ${domainName}LoadedAction).domains, state);
       case ${domainName}ActionTypes.${domainName}Created:
-          return ${domainName?uncap_first}Adapter.addOne((action as ${domainName}CreatedAction).domain, state);
+          const createdAction = action as ${domainName}CreatedAction;
+          return createdAction.domain && ${domainName?uncap_first}Adapter.addOne(createdAction.domain, state) || state;
       case ${domainName}ActionTypes.${domainName}Updated:
-          return ${domainName?uncap_first}Adapter.updateOne({
-            id: (action as ${domainName}UpdatedAction).domain.id,
-            changes: (action as ${domainName}UpdatedAction).domain,
-          }, state);
+          const updatedAction = action as ${domainName}UpdatedAction;
+          return updatedAction.domain && ${domainName?uncap_first}Adapter.updateOne({
+            id: updatedAction.domain.id,
+            changes: updatedAction.domain,
+          }, state) || state;
       case ${domainName}ActionTypes.${domainName}Deleted:
           return ${domainName?uncap_first}Adapter.removeOne((action as ${domainName}DeletedAction).id, state);
       default:

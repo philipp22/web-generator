@@ -2,28 +2,27 @@ package com.philipp_kehrbusch.events.gen.trafos.frontend;
 
 import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
-import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArgumentBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDConstantBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDMethodBuilder;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstant;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SingleTrafo(includeAnnotated = "Domain")
 public class ReducerTrafo {
 
   @Transform
-  public void transform(CDClass domain, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomain domain, WebElements elements) {
     var name = domain.getName() + "Reducer";
     var imports = new ArrayList<String>();
     imports.add("import {createEntityAdapter, EntityState} from '@ngrx/entity'");
@@ -48,7 +47,7 @@ public class ReducerTrafo {
                     .build()));
   }
 
-  private CDConstant createAdapter(CDClass domain) {
+  private CDConstant createAdapter(RawDomain domain) {
     var constant = new CDConstantBuilder()
             .name(StringUtil.firstLower(domain.getName()) + "Adapter")
             .addModifier("export")
@@ -57,7 +56,7 @@ public class ReducerTrafo {
     return constant;
   }
 
-  private CDConstant createInitialState(CDClass domain) {
+  private CDConstant createInitialState(RawDomain domain) {
     var constant = new CDConstantBuilder()
             .name("initial" + domain.getName() + "State")
             .addModifier("export")
@@ -67,7 +66,7 @@ public class ReducerTrafo {
     return constant;
   }
 
-  private CDMethod createReducer(CDClass domain) {
+  private CDMethod createReducer(RawDomain domain) {
     var reducer = new CDMethodBuilder()
             .addModifier("export")
             .name(StringUtil.firstLower(domain.getName()) + "Reducer")

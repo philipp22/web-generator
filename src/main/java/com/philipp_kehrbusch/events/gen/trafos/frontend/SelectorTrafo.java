@@ -4,26 +4,27 @@ import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArgumentBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDConstantBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDMethodBuilder;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstant;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
+import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @GlobalTrafo
 public class SelectorTrafo {
 
   @Transform
-  public void transform(List<CDClass> domains, List<WebElement> elements, GeneratorSettings settings) {
+  public void transform(RawDomains domains, WebElements elements, GeneratorSettings settings) {
     domains = TrafoUtils.getDomains(domains);
     domains.forEach(domain -> {
       var name = domain.getName() + "Selectors";
@@ -67,7 +68,7 @@ public class SelectorTrafo {
     return featureSelector;
   }
 
-  private CDConstant createDomainSelector(CDClass domain) {
+  private CDConstant createDomainSelector(RawDomain domain) {
     var domainSelector = new CDConstantBuilder()
             .name("select" + domain.getName())
             .addModifier("export")
@@ -77,7 +78,7 @@ public class SelectorTrafo {
     return domainSelector;
   }
 
-  private CDMethod createGetById(CDClass domain) {
+  private CDMethod createGetById(RawDomain domain) {
     var selector = new CDMethodBuilder()
             .name("get" + domain.getName() + "ById")
             .addModifier("export")
@@ -91,7 +92,7 @@ public class SelectorTrafo {
     return selector;
   }
 
-  private CDMethod createGetByIds(CDClass domain) {
+  private CDMethod createGetByIds(RawDomain domain) {
     var selector = new CDMethodBuilder()
             .name("get" + domain.getName() + "ByIds")
             .addModifier("export")
@@ -105,7 +106,7 @@ public class SelectorTrafo {
     return selector;
   }
 
-  private CDConstant createGetAll(CDClass domain) {
+  private CDConstant createGetAll(RawDomain domain) {
     var selector = new CDConstantBuilder()
             .name("getAll" + domain.getName())
             .addModifier("export")
