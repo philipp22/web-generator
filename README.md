@@ -32,3 +32,7 @@ The following artifacts are generated
 * Redux actions and effects for domain object retrieval and manipulation
 * API clients
 * Redux form components
+
+## Build
+
+To build and run the generator, run `mvn clean install exec:java -Ddir=<target dir>`. `<target-dir>` points to the root directory containing the target system. This is ignored at the moment but must be specified and will be used in future.
