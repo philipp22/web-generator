@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RestMethod;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDAttributeBuilder;
@@ -43,6 +44,15 @@ public class StateTrafo {
                     CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName())))
             .collect(Collectors.toList()));
 
+    domains.forEach(domain -> {
+      var stateType = TrafoUtils.getReturnType(domain, RestMethod.GET);
+      if (!stateType.equals(domain.getName())) {
+        imports.add(String.format("import {%s} from '@domain/%s'",
+                stateType,
+                CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, stateType)));
+      }
+    });
+
     elements.add(new WebElement(Targets.FRONTEND, name, "redux/state", imports,
             new CDArtifactBuilder()
                     .name(name)
@@ -52,7 +62,7 @@ public class StateTrafo {
                             .addAttributes(domains.stream()
                                     .map(domain -> new CDAttributeBuilder()
                                             .name(StringUtil.firstLower(domain.getName()))
-                                            .type("EntityState<" + domain.getName() + ">")
+                                            .type("EntityState<" + TrafoUtils.getReturnType(domain, RestMethod.GET) + ">")
                                             .build())
                                     .collect(Collectors.toList()))
                             .build())

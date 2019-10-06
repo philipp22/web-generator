@@ -2,8 +2,9 @@ package com.philipp_kehrbusch.events.gen.trafos.frontend;
 
 import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
-import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
+import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RestMethod;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
@@ -16,14 +17,18 @@ import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @SingleTrafo(includeAnnotated = "Domain")
 public class ActionTrafo {
 
   @Transform
-  public void transform(RawDomain domain, WebElements elements, GeneratorSettings settings) {
+  public void transform(RawDomain domain, WebElements elements) {
     var actions = new ArrayList<CDClass>();
+    var imports = new ArrayList<String>();
+    imports.add("import {Action} from '@ngrx/store'");
+    imports.add(String.format("import {%s} from '@domain/%s'",
+                    domain.getName(),
+                    CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName())));
 
     // load by id
     actions.add(new CDClassBuilder()
@@ -150,6 +155,12 @@ public class ActionTrafo {
             .build());
 
     // loaded
+    var loadedType = TrafoUtils.getReturnType(domain, RestMethod.GET);
+    if (!loadedType.equals(domain.getName())) {
+      imports.add(String.format("import {%s} from '@domain/%s'",
+              loadedType,
+              CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, loadedType)));
+    }
     actions.add(new CDClassBuilder()
             .name(domain.getName() + "LoadedAction")
             .addInterface("Action")
@@ -164,7 +175,7 @@ public class ActionTrafo {
                     .name(domain.getName() + "LoadedAction")
                     .addArgument(new CDArgumentBuilder()
                             .name("domains")
-                            .type(domain.getName() + "[]")
+                            .type(loadedType + "[]")
                             .addModifier("public")
                             .build())
                     .build())
@@ -238,12 +249,7 @@ public class ActionTrafo {
             .build());
 
     elements.add(new WebElement(Targets.FRONTEND, domain.getName() + "Actions", "redux/actions",
-            Arrays.asList(
-                    "import {Action} from '@ngrx/store'",
-                    String.format("import {%s} from '@domain/%s'",
-                            domain.getName(),
-                            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName()))
-            ),
+            imports,
             new CDArtifactBuilder()
                     .name(domain.getName() + "Actions")
                     .addClasses(actions)

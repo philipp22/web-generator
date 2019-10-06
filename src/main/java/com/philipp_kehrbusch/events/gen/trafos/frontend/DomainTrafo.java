@@ -10,7 +10,6 @@ import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDAttributeBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDInterfaceBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
@@ -18,10 +17,9 @@ import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.TypeUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
-@GlobalTrafo(includeAnnotated = "Domain")
+@GlobalTrafo(includeAnnotated = {"Domain", "DTO"})
 public class DomainTrafo {
 
   @Transform

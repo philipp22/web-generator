@@ -4,13 +4,14 @@ import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.gen.webdomain.Target;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RawRestMethod;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RestMethod;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class TrafoUtils {
@@ -89,5 +90,25 @@ public class TrafoUtils {
 
   private static String packageToPath(String pckg) {
     return pckg.replace(".", "/");
+  }
+
+  public static String getReturnType(RawDomain domain, String httpMethod) {
+    if (httpMethod.equalsIgnoreCase("get")) {
+      return getReturnType(domain, RestMethod.GET);
+    } else if (httpMethod.equalsIgnoreCase("put")) {
+      return getReturnType(domain, RestMethod.PUT);
+    } else if (httpMethod.equalsIgnoreCase("post")) {
+      return getReturnType(domain, RestMethod.POST);
+    } else if (httpMethod.equalsIgnoreCase("delete")) {
+      return getReturnType(domain, RestMethod.DELETE);
+    }
+    return null;
+  }
+
+  public static String getReturnType(RawDomain domain, RestMethod httpMethod) {
+    return domain.getRestMethods().stream()
+            .filter(rm -> rm.getMethod() == httpMethod).findFirst()
+            .map(RawRestMethod::getReturnType)
+            .orElse(null);
   }
 }

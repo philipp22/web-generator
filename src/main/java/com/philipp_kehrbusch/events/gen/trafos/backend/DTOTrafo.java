@@ -3,13 +3,11 @@ package com.philipp_kehrbusch.events.gen.trafos.backend;
 import com.philipp_kehrbusch.events.gen.Targets;
 import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.GeneratorSettings;
-import com.philipp_kehrbusch.gen.webdomain.source.builders.RawDomainBuilder;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstructor;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
@@ -20,7 +18,6 @@ import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.ImportUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.MethodUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @GlobalTrafo(includeAnnotated = {"Domain", "DTO"})
@@ -55,8 +52,7 @@ public class DTOTrafo {
   }
 
   @Transform
-  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
-    var domains = TrafoUtils.getDomains(allDomains);
+  public void transform(RawDomains domains, WebElements elements) {
     var imports = ImportUtil.getDefaultImports();
     imports.add("com.philipp_kehrbusch.web.rte.*");
     domains.forEach(domain -> {

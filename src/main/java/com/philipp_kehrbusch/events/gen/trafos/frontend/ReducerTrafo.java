@@ -2,7 +2,9 @@ package com.philipp_kehrbusch.events.gen.trafos.frontend;
 
 import com.google.common.base.CaseFormat;
 import com.philipp_kehrbusch.events.gen.Targets;
+import com.philipp_kehrbusch.events.gen.TrafoUtils;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
+import com.philipp_kehrbusch.gen.webdomain.source.domain.RestMethod;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArgumentBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
@@ -24,10 +26,11 @@ public class ReducerTrafo {
   @Transform
   public void transform(RawDomain domain, WebElements elements) {
     var name = domain.getName() + "Reducer";
+    var domainName = TrafoUtils.getReturnType(domain, RestMethod.GET);
     var imports = new ArrayList<String>();
     imports.add("import {createEntityAdapter, EntityState} from '@ngrx/entity'");
-    imports.add("import {" + domain.getName() + "} from '@domain/" +
-            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName()) + "'");
+    imports.add("import {" + domainName + "} from '@domain/" +
+            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domainName) + "'");
     imports.add(String.format("import {%sActions, %sActionTypes, %sLoadedAction, %sCreatedAction, %sUpdatedAction, " +
                     "%sDeletedAction} from '@redux/actions/%s.actions'",
             domain.getName(),
@@ -48,11 +51,12 @@ public class ReducerTrafo {
   }
 
   private CDConstant createAdapter(RawDomain domain) {
+    var domainName = TrafoUtils.getReturnType(domain, RestMethod.GET);
     var constant = new CDConstantBuilder()
             .name(StringUtil.firstLower(domain.getName()) + "Adapter")
             .addModifier("export")
             .build();
-    TemplateManager.getInstance().setTemplate(constant, "ts/redux/reducer/Adapter.ftl", domain.getName());
+    TemplateManager.getInstance().setTemplate(constant, "ts/redux/reducer/Adapter.ftl", domainName);
     return constant;
   }
 
@@ -67,10 +71,11 @@ public class ReducerTrafo {
   }
 
   private CDMethod createReducer(RawDomain domain) {
+    var domainName = TrafoUtils.getReturnType(domain, RestMethod.GET);
     var reducer = new CDMethodBuilder()
             .addModifier("export")
             .name(StringUtil.firstLower(domain.getName()) + "Reducer")
-            .returnType("EntityState<" + domain.getName() + ">")
+            .returnType("EntityState<" + domainName + ">")
             .addArgument(new CDArgumentBuilder()
                     .name("state")
                     .defaultValue("initial" + domain.getName() + "State")
