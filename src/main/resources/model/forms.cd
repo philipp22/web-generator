@@ -1,8 +1,0 @@
-@Form
-domain Event {
-	String title;
-	String description ?;
-	String location ?;
-	String date;
-	String time;
-}

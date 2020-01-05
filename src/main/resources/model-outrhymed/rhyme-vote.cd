@@ -1,0 +1,6 @@
+@NoRest
+@NoBL
+domain RhymeVote {
+	String rhyme;
+	int votes;
+}

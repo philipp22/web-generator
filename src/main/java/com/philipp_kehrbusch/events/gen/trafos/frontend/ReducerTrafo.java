@@ -13,14 +13,13 @@ import com.philipp_kehrbusch.gen.webdomain.target.builders.CDMethodBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstant;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
-import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 
 import java.util.ArrayList;
 
-@SingleTrafo(includeAnnotated = "Domain")
+//@SingleTrafo(includeAnnotated = "Domain")
 public class ReducerTrafo {
 
   @Transform

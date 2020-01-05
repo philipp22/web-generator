@@ -1,0 +1,41 @@
+domain Game {
+	String gameCode;
+	String name;
+	@ManyToMany
+	List<Player> players;
+	@ManyToOne
+	Player host;
+	@ManyToOne
+	Player currentPlayer;
+	@OneToMany
+	List<RhymeVote> rhymeVotes;
+	@ElementCollection
+	List<String> confirmedRhymes;
+	@ManyToOne
+	Cardset cardset;
+	@ManyToOne
+	Card currentCard;
+	@ManyToMany
+	List<Card> playedCards;
+
+	rest {
+		create(/): POST (GameCreateView) -> GameView;
+		join(/{String gameCode}/players): PUT () -> void;
+		start(/{String gameCode}/start): POST () -> void;
+		stop(/{String gameCode}/stop): POST () -> void;
+		vote(/{String gameCode}/vote): POST (String as rhyme) -> void;
+	}
+}
+
+view GameView from Game as g {
+	g.id;
+	g.gameCode;
+	g.name;
+	g.players.id as playerIds;
+	g.host.id as hostId;
+	g.currentPlayer.id as currentPlayerId;
+}
+
+view GameCreateView {
+	String name;
+}

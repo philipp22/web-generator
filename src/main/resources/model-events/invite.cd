@@ -1,0 +1,12 @@
+domain Invitation {
+	@ManyToOne
+	Event event;
+	@ManyToOne
+	User receiver;
+}
+
+view InvitationView from Invitation as inv {
+	inv.id;
+	inv.event.id as eventId;
+	inv.receiver.id as receiverId;
+}

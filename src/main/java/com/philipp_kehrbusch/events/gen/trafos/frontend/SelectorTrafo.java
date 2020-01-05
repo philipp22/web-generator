@@ -13,14 +13,13 @@ import com.philipp_kehrbusch.gen.webdomain.target.builders.CDMethodBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstant;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
-import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
 
-@GlobalTrafo
+//@GlobalTrafo
 public class SelectorTrafo {
 
   @Transform

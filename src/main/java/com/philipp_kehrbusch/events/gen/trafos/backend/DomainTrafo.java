@@ -9,15 +9,11 @@ import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstructor;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
-import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
-import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
-import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
-import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
+import com.philipp_kehrbusch.gen.webdomain.trafos.*;
 import com.philipp_kehrbusch.gen.webdomain.util.ImportUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.MethodUtil;
 
@@ -25,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@GlobalTrafo(includeAnnotated = "Domain")
+@GlobalDomainTrafo
 public class DomainTrafo {
 
   @Transform
-  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
-    var domains = TrafoUtils.getDomains(allDomains);
+  public void transform(RawDomains domains, WebElements elements, GeneratorSettings settings) {
     var imports = ImportUtil.getDefaultImports();
     imports.add(ImportPaths.getRTEImport());
     imports.add("javax.persistence.*");
+    imports.add("org.hibernate.annotations.Type");
 
     domains.forEach(domain -> elements.add(new WebElement(Targets.BACKEND, domain.getName(), "domain", imports,
             new CDArtifactBuilder()
@@ -50,11 +46,11 @@ public class DomainTrafo {
             .addInterface("IDomain<" + domain.getName() + ">")
             .addAttributes(domain.getAttributes().stream()
                     .map(attr -> new CDAttributeBuilder()
-                              .addModifier("private")
-                              .type(attr.getType())
-                              .name(attr.getName())
-                              .addAnnotations(createAttributeAnnotations(attr))
-                              .build())
+                            .addModifier("private")
+                            .type(attr.getType())
+                            .name(attr.getName())
+                            .addAnnotations(createAttributeAnnotations(attr))
+                            .build())
                     .collect(Collectors.toList()))
             .addMethods(domain.getAttributes().stream()
                     .map(MethodUtil::createGetter)
@@ -65,7 +61,7 @@ public class DomainTrafo {
             .addMethod(createMergeMethod(domain, domains))
             .addConstructor(createConstructor(domain))
             .addConstructor(new CDConstructorBuilder()
-                    .addModifier("public")
+                    .addModifier("protected")
                     .name(domain.getName())
                     .build());
 
@@ -130,6 +126,8 @@ public class DomainTrafo {
       res.add("@OneToMany");
     } else if (TrafoUtils.hasAnnotation(attr, "ManyToMany")) {
       res.add("@ManyToMany");
+    } else if (TrafoUtils.hasAnnotation(attr, "ElementCollection")) {
+      res.add("@ElementCollection");
     }
 
     if (TrafoUtils.hasAnnotation(attr, "Text")) {

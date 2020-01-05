@@ -6,9 +6,11 @@ import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawRestMethod;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RestMethod;
+import com.philipp_kehrbusch.gen.webdomain.source.view.RawView;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
+import com.philipp_kehrbusch.gen.webdomain.trafos.RawViews;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -20,6 +22,15 @@ public class TrafoUtils {
     String regex = "List<(.*)>";
     type = type.replaceAll(regex, "$1");
     return domains.stream()
+            .map(clazz -> clazz.getName().replaceAll("Super(.*)", "$1"))
+            .collect(Collectors.toList())
+            .contains(type);
+  }
+
+  public static boolean isTypeView(String type, RawViews views) {
+    String regex = "List<(.*)>";
+    type = type.replaceAll(regex, "$1");
+    return views.stream()
             .map(clazz -> clazz.getName().replaceAll("Super(.*)", "$1"))
             .collect(Collectors.toList())
             .contains(type);
@@ -37,6 +48,11 @@ public class TrafoUtils {
 
   public static boolean hasAnnotation(RawDomain clazz, String annotation) {
     return clazz.getAnnotations().stream().anyMatch(a -> a.equalsIgnoreCase(annotation) ||
+            a.equalsIgnoreCase("@" + annotation));
+  }
+
+  public static boolean hasAnnotation(RawView view, String annotation) {
+    return view.getAnnotations().stream().anyMatch(a -> a.equalsIgnoreCase(annotation) ||
             a.equalsIgnoreCase("@" + annotation));
   }
 

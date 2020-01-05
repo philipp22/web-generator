@@ -1,8 +1,0 @@
-@Domain
-@NoRest
-@NoDAO
-domain FriendshipRequest {
-	String senderUsername ?;
-	String receiverUsername ?;
-	String receiverEmail ?;
-}

@@ -6,7 +6,6 @@ import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDAttributeBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDInterfaceBuilder;
-import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.TypeUtil;
@@ -14,7 +13,7 @@ import com.philipp_kehrbusch.gen.webdomain.util.TypeUtil;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-@SingleTrafo(includeAnnotated = "Form")
+//@SingleTrafo(includeAnnotated = "Form")
 public class FormTrafo {
 
   @Transform

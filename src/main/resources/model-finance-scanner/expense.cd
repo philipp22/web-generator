@@ -1,0 +1,47 @@
+domain Expense {
+	@ManyToOne
+	Category category;
+	BigDecimal amount;
+	@ManyToOne
+	Receiver receiver;
+	long timestamp;
+	@OneToOne
+	DevicePath devicePath;
+	@ManyToOne
+	UserGroup userGroup;
+	@OneToOne
+	Scan scan;
+
+	rest {
+		create(/): POST (ExpenseCreateView) -> ExpenseView;
+		getAllForGroup(/userGroups/{long groupId}): GET () -> List<ExpenseView>;
+		get(/{long id}): GET () -> ExpenseView;
+		update(/): PUT (ExpenseUpdateView) -> ExpenseView;
+		delete(/{long id}): DELETE () -> void;
+	}
+}
+
+view ExpenseCreateView {
+	long categoryId;
+	BigDecimal amount;
+	long receiverId;
+	long userGroupId;
+	String scanImage;
+}
+
+view ExpenseUpdateView {
+	long categoryId;
+	BigDecimal amount;
+	long receiverId;
+}
+
+view ExpenseView from Expense as e {
+	e.id;
+	e.category.id as categoryId;
+	e.category.name as categoryName;
+	e.amount;
+	e.receiver.id as receiverId;
+	e.devicePath.id as devicePathId;
+	e.userGroup.id as userGroupId;
+	e.scan.id as scanId;
+}

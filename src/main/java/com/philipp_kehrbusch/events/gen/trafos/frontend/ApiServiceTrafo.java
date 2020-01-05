@@ -8,22 +8,18 @@ import com.philipp_kehrbusch.gen.webdomain.source.domain.RawAttribute;
 import com.philipp_kehrbusch.gen.webdomain.source.domain.RawDomain;
 import com.philipp_kehrbusch.gen.webdomain.target.WebElement;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.*;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDAttribute;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDConstructor;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
-import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 import com.philipp_kehrbusch.gen.webdomain.util.TypeUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
-@SingleTrafo(includeAnnotated = "Domain")
+//@SingleTrafo(includeAnnotated = "Domain")
 public class ApiServiceTrafo {
 
   @Transform

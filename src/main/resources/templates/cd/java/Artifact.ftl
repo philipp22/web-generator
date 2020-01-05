@@ -19,7 +19,7 @@ import ${import};
 	</#list>
 
 	<#list class.constructors as constructor>
-		<#list constructor.modifiers as modifier>${modifier} </#list>${constructor.name}
+		<#list constructor.modifiers as modifier>${modifier} </#list>${class.generatedName}
 		(
 		<#list constructor.arguments as arg>
 			<#if (arg_index > 0)>,</#if>${arg.type} ${arg.name}
@@ -38,7 +38,7 @@ import ${import};
 	<#list interface.annotations as annotation>
 		${annotation}
 	</#list>
-	<#list interface.modifiers as modifier>${modifier} </#list>interface ${interface.name}
+	<#list interface.modifiers as modifier>${modifier} </#list>interface ${interface.generatedName}
 	<#if (interface.superInterfaces?size > 0)>extends </#if>
 	<#list interface.superInterfaces as superInterface>
 		<#if (superInterface_index > 0)>,</#if>${superInterface}

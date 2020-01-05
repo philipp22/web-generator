@@ -1,0 +1,19 @@
+domain UserSettings {
+	@GetOneBy
+	@OneToOne
+	User user;
+	boolean emailOnEventUpdate;
+	boolean emailOnEventComment;
+	boolean emailOnEventInvitation;
+
+	rest {
+		get(/{long id}): GET () -> UserSettingsView;
+		update(/): PUT (UserSettingsView) -> void;
+	}
+}
+
+view UserSettingsView from UserSettings as us {
+	us.emailOnEventUpdate;
+	us.emailOnEventComment;
+	us.emailOnEventInvitation;
+}

@@ -1,0 +1,25 @@
+domain FriendshipRequest {
+	String senderUsername;
+	String receiverUsername;
+	String receiverEmail;
+	long timestamp;
+
+	rest {
+		getAll(/): GET () -> List<FriendshipRequestView>;
+		create(/): POST (FriendshipRequestCreateView) -> void;
+		accept(/{long id}): POST () -> void;
+		decline(/{long id}): POST () -> void;
+		revoke(/{long id}): DELETE () -> void;
+	}
+}
+
+view FriendshipRequestCreateView from FriendshipRequest as fr {
+	fr.receiverUsername;
+	fr.receiverEmail;
+}
+
+view FriendshipRequestView from FriendshipRequest as fr {
+	fr.senderUsername;
+	fr.receiverUsername;
+	fr.receiverEmail;
+}

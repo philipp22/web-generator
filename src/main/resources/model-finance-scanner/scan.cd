@@ -1,0 +1,9 @@
+domain Scan {
+	@Text
+	String image;
+}
+
+view ScanView from Scan as s {
+	s.id;
+	s.image;
+}

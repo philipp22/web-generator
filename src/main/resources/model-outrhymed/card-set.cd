@@ -1,0 +1,32 @@
+domain Cardset {
+	@ManyToOne
+	User author;
+	String name;
+	@Text
+	String description;
+	@ManyToMany
+	List<Tag> tags;
+
+	rest {
+		create(/): POST (CardsetCreateUpdateView) -> CardsetView;
+		getAll(/): GET () -> List<CardsetView>;
+		get(/{long id}): GET () -> CardsetView;
+		update(/): PUT (CardsetCreateUpdateView) -> CardsetView;
+		delete(/{long id}): DELETE () -> void;
+	}
+}
+
+view CardsetCreateUpdateView {
+	String name;
+	String description;
+	List<Long> tagIds;
+	List<CardCreateView> cards;
+}
+
+view CardsetView from Cardset as cs {
+	cs.id;
+	cs.author.id as authorId;
+	cs.name;
+	cs.description;
+	cs.tags.id as tagIds;
+}

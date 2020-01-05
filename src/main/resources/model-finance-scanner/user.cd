@@ -1,0 +1,46 @@
+domain User {
+	String username;
+	String email;
+	String passwordHash;
+	long registrationDate;
+	long lastLogin;
+	String displayName;
+
+	rest {
+		getMe(/me): GET () -> UserView;
+		get(/{long id}): GET () -> UserView;
+		setEmail(/me/email): PUT (String as email) -> void;
+		setPassword(/me/password): PUT (String as password) -> void;
+		setDisplayName(/me/displayName): PUT (String as displayName) -> void;
+	}
+}
+
+view UserView from User as u {
+	u.username;
+	u.email;
+	u.displayName;
+}
+
+domain UserGroup {
+	@ManyToMany
+	List<User> members;
+  boolean isDefault;
+
+  rest {
+  	create(/): POST (UserGroupCreateView) -> UserGroupView;
+  	getAll(/): GET () -> List<UserGroupView>;
+  	get(/{long id}): GET () -> UserGroupView;
+  	getDefault(/default): GET () -> UserGroupView;
+  	addMember(/{long groupId}/members): PUT (long as userId) -> void;
+  	delMember(/{long groupId}/members/{long userId}): DELETE () -> void;
+  }
+}
+
+view UserGroupView from UserGroup as ug {
+	ug.id;
+	ug.members.id as memberIds;
+}
+
+view UserGroupCreateView {
+	List<Long> memberIds;
+}

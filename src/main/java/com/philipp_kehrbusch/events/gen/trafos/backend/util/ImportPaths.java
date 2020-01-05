@@ -14,7 +14,7 @@ public class ImportPaths {
     return basePackage + ".dao.*";
   }
 
-  public static String getDTOImport(String basePackage) {
-    return basePackage + ".dto.*";
+  public static String getViewImport(String basePackage) {
+    return basePackage + ".view.*";
   }
 }

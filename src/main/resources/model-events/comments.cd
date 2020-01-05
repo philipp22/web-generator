@@ -1,0 +1,33 @@
+domain Comment {
+	long timestamp ?;
+	@ManyToOne
+	Event event;
+	@Text
+	String content ?;
+	@Text
+	String image ?;
+	@ManyToOne
+	User sender ?;
+
+	rest {
+		getAllForEvent(/events/{long eventId}): GET () -> List<CommentView>;
+		getLatestForEvent(/events/{long eventId}/latest): GET () -> CommentView;
+		get(/{long id}): GET () -> CommentView;
+		create(/): POST (CommentCreateView) -> CommentView;
+	}
+}
+
+view CommentCreateView {
+	long eventId;
+	String content;
+	String image;
+}
+
+view CommentView from Comment as c {
+	c.id;
+	c.timestamp;
+	c.event.id as eventId;
+	c.content;
+	c.image;
+	c.sender.id as senderId;
+}

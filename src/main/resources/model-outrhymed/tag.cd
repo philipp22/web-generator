@@ -1,0 +1,20 @@
+domain Tag {
+	String name;
+	String description;
+	@Text
+	String image;
+
+	rest {
+		getAll(/): GET () -> List<TagView>;
+		get(/{long id}): GET () -> TagView;
+		create(/): POST (TagView) -> TagView;
+		update(/): PUT (TagView) -> TagView;
+		delete(/{long id}): DELETE () -> void;
+	}
+}
+
+view TagView from Tag as t {
+	t.name;
+	t.description;
+	t.image;
+}

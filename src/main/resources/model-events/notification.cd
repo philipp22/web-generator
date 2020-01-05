@@ -1,0 +1,17 @@
+domain Notification {
+	@ManyToOne
+	User user;
+	int type;
+	String title;
+	@Text
+	String content;
+	long linkedId;
+}
+
+view NotificationView from Notification as n {
+	n.user.id;
+	n.type;
+	n.title;
+	n.content;
+	n.linkedId;
+}

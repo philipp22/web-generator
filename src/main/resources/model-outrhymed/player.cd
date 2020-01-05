@@ -1,0 +1,17 @@
+domain Player {
+	@OneToOne
+	User user;
+	String displayName;
+	@Text
+	String avatar;
+	long lastLogin;
+	long registrationDate;
+	@ManyToMany
+	List<Tag> favoriteTags;
+}
+
+view PlayerView from Player as p {
+	p.displayName;
+	p.avatar;
+	p.favoriteTags.id;
+}

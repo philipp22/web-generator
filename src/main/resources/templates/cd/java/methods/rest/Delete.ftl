@@ -1,3 +1,0 @@
-{
-	super.delete(id);
-}

@@ -1,0 +1,23 @@
+domain Card {
+	@Text
+	String verse;
+	@ElementCollection
+	List<String> rhymes;
+	@ManyToOne
+	Cardset cardset;
+
+	rest {
+		get(/{long id}): GET () -> CardView;
+	}
+}
+
+view CardView from Card as c {
+	c.verse;
+	c.rhymes;
+	c.cardset.id as cardsetId;
+}
+
+view CardCreateView {
+	String verse;
+	List<String> rhymes;
+}

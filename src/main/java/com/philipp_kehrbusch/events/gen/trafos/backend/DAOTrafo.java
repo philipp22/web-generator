@@ -10,9 +10,8 @@ import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArgumentBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDArtifactBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDInterfaceBuilder;
 import com.philipp_kehrbusch.gen.webdomain.target.builders.CDMethodBuilder;
-import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDMethod;
-import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalTrafo;
+import com.philipp_kehrbusch.gen.webdomain.trafos.GlobalDomainTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.RawDomains;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
@@ -22,12 +21,11 @@ import com.philipp_kehrbusch.gen.webdomain.util.StringUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@GlobalTrafo
+@GlobalDomainTrafo
 public class DAOTrafo {
 
   @Transform
-  public void transform(RawDomains allDomains, WebElements elements, GeneratorSettings settings) {
-    var domains = TrafoUtils.getDomains(allDomains);
+  public void transform(RawDomains domains, WebElements elements, GeneratorSettings settings) {
     domains.stream()
             .filter(domain -> !TrafoUtils.hasAnnotation(domain, "NoDAO"))
             .forEach(domain -> {
@@ -45,23 +43,31 @@ public class DAOTrafo {
                                       .name(name)
                                       .addSuperInterface("IDAO")
                                       .addSuperInterface("JpaRepository<" + domain.getName() + ", Long>")
-                                      .addMethods(createGetByMethods(domain))
+                                      .addMethods(createGetByMethods(domain, domains))
                                       .build())
                               .build()));
             });
   }
 
-  private List<CDMethod> createGetByMethods(RawDomain domain) {
+  private List<CDMethod> createGetByMethods(RawDomain domain, RawDomains domains) {
     return domain.getAttributes().stream()
             .filter(attr -> TrafoUtils.hasAnnotation(attr, "GetOneBy"))
-            .map(attr -> new CDMethodBuilder()
-                    .name("findBy" + StringUtil.firstUpper(attr.getName()))
-                    .returnType("Optional<" + domain.getName() + ">")
-                    .addArgument(new CDArgumentBuilder()
-                            .type(attr.getType())
-                            .name(attr.getName())
-                            .build())
-                    .build())
+            .map(attr -> {
+              var name = StringUtil.firstUpper(attr.getName());
+              if (TrafoUtils.isTypeDomain(attr.getType(), domains)) {
+                name += "Id";
+              }
+              var type = TrafoUtils.isTypeDomain(attr.getType(), domains) ? "long" : attr.getType();
+
+              return new CDMethodBuilder()
+                      .name("findBy" + name)
+                      .returnType("Optional<" + domain.getName() + ">")
+                      .addArgument(new CDArgumentBuilder()
+                              .type(type)
+                              .name(attr.getName())
+                              .build())
+                      .build();
+            })
             .collect(Collectors.toList());
   }
 }

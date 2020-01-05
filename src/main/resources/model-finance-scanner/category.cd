@@ -1,0 +1,12 @@
+domain Category {
+	@ManyToOne
+	User user;
+	String name;
+	String description;
+}
+
+view CategoryView from Category as c {
+	c.id;
+	c.name;
+	c.description;
+}

@@ -1,0 +1,72 @@
+domain Event {
+	String title;
+	@Text
+	String description;
+	String location;
+	long start;
+	@Text
+	String image ?;
+	@OneToMany
+	List<User> accepted;
+	@OneToMany
+	List<User> declined;
+	@OneToMany
+	List<User> ignored;
+	@ManyToOne
+	User host ?;
+	boolean publicVisibility;
+	boolean activated;
+	long lastUpdated;
+
+	rest {
+		get(/{long id}): GET () -> EventView;
+		getAll(/): GET () -> List<EventView>;
+		create(/): POST (EventCreateView) -> EventView;
+		update(/): PUT (EventUpdateView) -> EventView;
+		getInvitations(/{long id}/invitations): GET () -> List<InvitationView>;
+	}
+}
+
+@NoRest
+domain EventUserInfo {
+	@ManyToOne
+	Event event;
+	@ManyToOne
+	User user;
+	long lastVisited;
+}
+
+view EventCreateView from Event as e {
+	e.title;
+	e.description;
+	e.location;
+	e.start;
+	e.image;
+	e.publicVisibility;
+	e.activated;
+}
+
+view EventUpdateView from Event as e {
+	e.id;
+	e.title;
+	e.description;
+	e.location;
+	e.start;
+	e.image;
+	e.publicVisibility;
+	e.activated;
+}
+
+view EventView from Event as e {
+	e.id;
+	e.title;
+	e.description;
+	e.location;
+	e.start;
+	e.image;
+	e.publicVisibility;
+	e.activated;
+	e.accepted.id as acceptedIds;
+	e.declined.id as declinedIds;
+	e.ignored.id as ignoredIds;
+}

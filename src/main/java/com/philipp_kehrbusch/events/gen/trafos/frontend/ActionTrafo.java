@@ -11,14 +11,12 @@ import com.philipp_kehrbusch.gen.webdomain.target.cd.CDClass;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDEnum;
 import com.philipp_kehrbusch.gen.webdomain.target.cd.CDType;
 import com.philipp_kehrbusch.gen.webdomain.templates.TemplateManager;
-import com.philipp_kehrbusch.gen.webdomain.trafos.SingleTrafo;
 import com.philipp_kehrbusch.gen.webdomain.trafos.Transform;
 import com.philipp_kehrbusch.gen.webdomain.trafos.WebElements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-@SingleTrafo(includeAnnotated = "Domain")
+//@SingleTrafo(includeAnnotated = "Domain")
 public class ActionTrafo {
 
   @Transform
@@ -27,8 +25,8 @@ public class ActionTrafo {
     var imports = new ArrayList<String>();
     imports.add("import {Action} from '@ngrx/store'");
     imports.add(String.format("import {%s} from '@domain/%s'",
-                    domain.getName(),
-                    CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName())));
+            domain.getName(),
+            CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, domain.getName())));
 
     // load by id
     actions.add(new CDClassBuilder()

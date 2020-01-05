@@ -1,0 +1,57 @@
+domain User {
+	@GetOneBy
+	@Readonly
+	String username;
+	String email;
+	String passwordHash;
+	@Readonly
+	long registrationDate;
+	boolean temp;
+	long eventId;
+
+	rest {
+		changeEmail(/me/email): PUT (String as newEmail) -> void;
+		changePassword(/me/password): PUT (String as newPassword) -> void;
+		usernameExists(/usernames/{String username}): GET () -> boolean;
+	}
+}
+
+domain UserInfo {
+	@OneToOne
+	User user;
+	String firstName;
+	String lastName;
+	@Text
+	String profilePicture;
+
+	rest {
+		getMe(/me): GET () -> MeUserView;
+		getById(/users/{long userId}): GET () -> OtherUserView;
+		getByUsername(/users/usernames/{String username}): GET () -> OtherUserView;
+		update(/): PUT (UserInfoUpdateView) -> MeUserView;
+	}
+}
+
+view UserInfoUpdateView {
+	String firstName;
+	String lastName;
+	String profilePicture;
+}
+
+view MeUserView from User as u, UserInfo as ui {
+	u.id;
+	u.username;
+	u.email;
+	u.temp;
+	ui.firstName;
+	ui.lastName;
+	ui.profilePicture;
+}
+
+view OtherUserView from User as u, UserInfo as ui {
+	u.id;
+	u.username;
+	ui.firstName;
+	ui.lastName;
+	ui.profilePicture;
+}

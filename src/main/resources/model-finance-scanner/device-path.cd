@@ -1,0 +1,6 @@
+domain DevicePath {
+	String deviceId;
+	String path;
+	@ManyToOne
+	Expense expense;
+}

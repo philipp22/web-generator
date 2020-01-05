@@ -1,0 +1,12 @@
+domain Receiver {
+	@ManyToOne
+	User user;
+	String name;
+	String alias;
+}
+
+view ReceiverView from Receiver as r {
+	r.id;
+	r.name;
+	r.alias;
+}

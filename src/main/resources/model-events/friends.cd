@@ -1,0 +1,7 @@
+@NoRest
+domain Friend {
+	@ManyToOne
+	User user1;
+	@ManyToOne
+	User user2;
+}

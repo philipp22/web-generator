@@ -1,0 +1,5 @@
+domain User {
+	String username;
+	String email;
+	String passwordHash;
+}
