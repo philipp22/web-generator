@@ -86,6 +86,15 @@ public class RestTrafo {
                         .addAnnotation("@RequestBody")
                         .build());
               }
+
+              builder.addArguments(restMethod.getQueryParams().entrySet().stream()
+                      .map(entry -> new CDArgumentBuilder()
+                              .type(entry.getValue())
+                              .name(entry.getKey())
+                              .addAnnotation("@RequestParam(\"" + entry.getKey() + "\")")
+                              .build())
+                      .collect(Collectors.toList()));
+
               builder.addArguments(restMethod.getRouteVariables().entrySet().stream()
                       .map(entry -> new CDArgumentBuilder()
                               .type(entry.getValue())

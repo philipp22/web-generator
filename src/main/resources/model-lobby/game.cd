@@ -1,0 +1,10 @@
+domain Game {
+	String name;
+	int status;
+
+	rest {
+		create(/): POST (CreateGameView) -> Game;
+		getPlayers(/{long gameId}/players): GET () -> List<PlayerView>;
+		start(/{long gameId}/start): POST () -> void;
+	}
+}

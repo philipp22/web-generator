@@ -1,0 +1,27 @@
+domain Lobby {
+	String name;
+	String passwordHash;
+	int maxPlayers;
+	@ElementCollection
+	Map<String,String> properties;
+
+	rest {
+		create(/): POST (LobbyCreateView) -> void;
+		search(/search): POST (LobbySearchCriteria) -> List<Lobby>;
+		join(/{long lobbyId}/players): POST (LobbyJoinView) -> LobbyPlayerView;
+		leave(/{long lobbyId}/players/{long playerId}): DELETE () -> void;
+	}
+}
+
+view LobbyCreateView {
+	String name;
+	String password;
+	int maxPlayers;
+	Map<String,String> properties;
+}
+
+
+view LobbySearchCriteria {
+	String name;
+	boolean withPassword;
+}

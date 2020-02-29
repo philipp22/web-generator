@@ -18,9 +18,16 @@ import java.util.stream.Collectors;
 
 public class TrafoUtils {
 
+  public static boolean isTypeUsedInREST(String type, RawDomains domains, RawViews views) {
+    var primitiveType = getPrimitiveType(type);
+    return domains.stream()
+            .anyMatch(domain -> domain.getRestMethods().stream()
+                    .anyMatch(restMethod -> restMethod.getBodyType().equals(primitiveType) ||
+                            restMethod.getReturnType().equals(primitiveType)));
+  }
+
   public static boolean isTypeDomain(String type, RawDomains domains) {
-    String regex = "List<(.*)>";
-    type = type.replaceAll(regex, "$1");
+    type = getPrimitiveType(type);
     return domains.stream()
             .map(clazz -> clazz.getName().replaceAll("Super(.*)", "$1"))
             .collect(Collectors.toList())
@@ -88,6 +95,12 @@ public class TrafoUtils {
 
   public static boolean hasHandcodedJavaClass(RawDomain domain, Target target) {
     var file = new File(getFileForDomain(domain.getName(), target).getAbsolutePath()
+            .replace(target.getBasePath(), target.getBasePathHandcoded()));
+    return file.exists();
+  }
+
+  public static boolean hasHandcodedJavaClass(RawView view, Target target) {
+    var file = new File(getFileForDomain(view.getName(), target).getAbsolutePath()
             .replace(target.getBasePath(), target.getBasePathHandcoded()));
     return file.exists();
   }

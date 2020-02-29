@@ -42,7 +42,10 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>com.philipp_kehrbusch.events.gen.EventsGenerator</mainClass>
+          <!--<mainClass>com.philipp_kehrbusch.events.gen.EventsGenerator</mainClass>-->
+          <!--<mainClass>com.philipp_kehrbusch.events.gen.DeployServerGenerator</mainClass>-->
+          <mainClass>com.philipp_kehrbusch.events.gen.trafficsense.TrafficSenseGenerator</mainClass>
+          <!--<mainClass>com.philipp_kehrbusch.events.gen.LobbyGenerator</mainClass>-->
           <!--<mainClass>com.philipp_kehrbusch.events.gen.OutrhymedGenerator</mainClass>-->
           <!--<mainClass>com.philipp_kehrbusch.events.gen.FinanceScannerGenerator</mainClass>-->
           <arguments>

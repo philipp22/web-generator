@@ -1,0 +1,24 @@
+domain Application {
+	String name;
+	String dockerComposePath;
+
+	rest {
+		create(/): POST (ApplicationCreateView) -> ApplicationView;
+		getAll(/): GET () -> List<ApplicationView>;
+		delete(/names/{String name}): DELETE () -> void;
+		getByName(/names/{String name}): GET () -> ApplicationView;
+		start(/started/names/{String name}): POST () -> void;
+		stop(/stopped/names/{String name}): POST () -> void;
+		deploy(/deployed/names/{String name}): POST () -> void;
+	}
+}
+
+view ApplicationCreateView {
+	String name;
+	String dockerComposeContent;
+}
+
+view ApplicationView from Application as app {
+	app.id;
+	app.name;
+}

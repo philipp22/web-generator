@@ -1,4 +1,4 @@
-package ${element.basePath}.${element.path};
+package ${element.basePath}<#if element.path?? && (element.path?length > 0)>.${element.path}</#if>;
 
 <#list element.imports as import>
 import ${import};

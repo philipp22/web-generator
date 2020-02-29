@@ -7,8 +7,8 @@ domain FriendshipRequest {
 	rest {
 		getAll(/): GET () -> List<FriendshipRequestView>;
 		create(/): POST (FriendshipRequestCreateView) -> void;
-		accept(/{long id}): POST () -> void;
-		decline(/{long id}): POST () -> void;
+		accept(/{long id}/accept): POST () -> void;
+		decline(/{long id}/decline): POST () -> void;
 		revoke(/{long id}): DELETE () -> void;
 	}
 }

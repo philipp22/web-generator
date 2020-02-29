@@ -1,0 +1,16 @@
+domain LobbyPlayer {
+	String name;
+	@ManyToOne
+	Lobby lobby;
+	@ElementCollection
+	Map<String,String> properties;
+
+	rest {
+		get(/{long id}): GET () -> LobbyPlayerView;
+	}
+}
+
+view LobbyPlayerView from LobbyPlayer as p {
+	p.name;
+	p.properties;
+}

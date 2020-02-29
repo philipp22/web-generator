@@ -1,0 +1,22 @@
+domain Player {
+	String name;
+	@ManyToOne
+	Game game;
+	@ElementCollection
+	Map<String,String> properties;
+	@OneToOne
+	Vector3 position;
+	@OneToOne
+	Vector3 orientation;
+
+	rest {
+		get(/{long id}): GET () -> PlayerView;
+	}
+}
+
+view PlayerView from Player as p {
+	p.name;
+	p.properties;
+	p.position;
+	p.orientation;
+}

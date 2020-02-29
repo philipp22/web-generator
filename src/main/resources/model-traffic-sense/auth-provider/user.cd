@@ -1,0 +1,16 @@
+domain User {
+	String username;
+	String email;
+	String passwordHash;
+	@ManyToMany
+	List<Role> roles;
+
+	rest {
+		getMe (/me): GET () -> User;
+	}
+}
+
+domain Role {
+	String name;
+	List<String> permissions;
+}

@@ -1,0 +1,26 @@
+domain AverageSpeedInfo {
+	SellableInformationType infoType;
+	long lon;
+	long lat;
+	int averageSpeed;
+	int allowedSpeed;
+	int lane;
+
+	rest {
+		create(/): POST (AverageSpeedCreationView) -> void;
+		getAll(/): GET () -> List<AverageSpeedInfo> {
+			queryParams: [
+				long lon,
+				long lat
+			]
+		}
+	}
+}
+
+view AverageSpeedCreationView {
+	long lon;
+	long lat;
+	int averageSpeed;
+	int allowedSpeed;
+	int lane;
+}

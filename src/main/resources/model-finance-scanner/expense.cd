@@ -11,6 +11,8 @@ domain Expense {
 	UserGroup userGroup;
 	@OneToOne
 	Scan scan;
+	@Text
+	String text;
 
 	rest {
 		create(/): POST (ExpenseCreateView) -> ExpenseView;
@@ -27,6 +29,7 @@ view ExpenseCreateView {
 	long receiverId;
 	long userGroupId;
 	String scanImage;
+	String text;
 }
 
 view ExpenseUpdateView {
@@ -35,13 +38,14 @@ view ExpenseUpdateView {
 	long receiverId;
 }
 
-view ExpenseView from Expense as e {
+view ExpenseView from Expense as e, DevicePath as dp {
 	e.id;
 	e.category.id as categoryId;
 	e.category.name as categoryName;
 	e.amount;
 	e.receiver.id as receiverId;
-	e.devicePath.id as devicePathId;
+	dp.path;
 	e.userGroup.id as userGroupId;
 	e.scan.id as scanId;
+	e.text;
 }
