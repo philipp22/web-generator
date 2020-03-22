@@ -15,6 +15,10 @@
 	= ${tc.defineHookPoint(constant, null)};
 </#list>
 
+<#list element.artifact.exports as export>
+	export ${export};
+</#list>
+
 <#list element.artifact.functions as function>
 	<#list function.annotations as annotation>
 		${annotation}

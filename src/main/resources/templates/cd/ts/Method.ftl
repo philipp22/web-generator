@@ -6,7 +6,7 @@ ${tc.signature("node")}
 <#list node.modifiers as modifier>${modifier} </#list>${node.name}
 (
 <#list node.arguments as argument>
-	${tc.include("ts/Argument.ftl", argument)}
+	<#if (argument_index > 0)>,</#if>${tc.include("ts/Argument.ftl", argument)}
 </#list>
 )<#if node.returnType??>: ${node.returnType}</#if>
 ${tc.defineHookPoint(node, "ts/MethodBody.ftl")}

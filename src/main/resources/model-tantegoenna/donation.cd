@@ -1,0 +1,46 @@
+domain Donation {
+	@ManyToOne
+	User sender;
+	@ManyToOne
+	User receiver;
+	long timestamp;
+	int firstYear;
+	int firstMonth;
+	int lastYear;
+	int lastMonth;
+	int amount;
+
+	rest {
+		donate(/): POST (DonationCreateView) -> void;
+		getOwn(/): GET () -> List<DonationView>;
+		cancel(/{long id}): DELETE () -> void;
+		getTotalAmount(/totalAmount): GET () -> long {
+			auth: false
+		}
+		getTotalAmountForCompany(/totalAmount/companies/{long id}): GET () -> long {
+			auth: false
+		}
+		getPercentageForCompany(/percentages/companies/{long id}): GET () -> long {
+			auth: false
+		}
+	}
+}
+
+view DonationCreateView {
+	long receiverId;
+	int firstYear;
+	int firstMonth;
+	int lastYear;
+	int lastMonth;
+	int amount;
+}
+
+view DonationView from Donation as d {
+	d.receiver.id as receiverId;
+	d.timestamp;
+	d.firstYear;
+	d.firstMonth;
+	d.lastYear;
+	d.lastMonth;
+	d.amount;
+}

@@ -4,13 +4,22 @@ domain User {
 	String passwordHash;
 	@ManyToMany
 	List<Role> roles;
+	long registrationDate;
+	long lastLogin;
 
 	rest {
 		getMe (/me): GET () -> User;
+		create (/): POST (UserRegistration) -> void;
 	}
 }
 
 domain Role {
 	String name;
 	List<String> permissions;
+}
+
+view UserRegistration {
+	String username;
+	String email;
+	String password;
 }

@@ -1,0 +1,8 @@
+domain Goal {
+	int onetimeAmount;
+	int onetimeDeadlineYear;
+	int onetimeDeadlineMonth;
+	int perMonthAmount;
+	int perMonthUntilYear;
+	int perMonthUntilMonth;
+}

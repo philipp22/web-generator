@@ -33,7 +33,8 @@ public class BLTrafo {
               var imports = ImportUtil.getDefaultImports();
               imports.add(ImportPaths.getDomainImport(settings.getBasePackage(Targets.BACKEND)));
               imports.add(ImportPaths.getViewImport(settings.getBasePackage(Targets.BACKEND)));
-              imports.add("com.philipp_kehrbusch.web.rte.exceptions.*");
+              imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.*");
+              imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.exceptions.*");
 
               var name = "I" + domain.getName() + "BL";
               elements.add(new WebElement(Targets.BACKEND, name, "bl", imports,
@@ -64,6 +65,14 @@ public class BLTrafo {
                                                                 .name(entry.getKey())
                                                                 .build())
                                                         .collect(Collectors.toList()));
+
+                                                builder.addArguments(restMethod.getQueryParams().entrySet().stream()
+                                                        .map(entry -> new CDArgumentBuilder()
+                                                                .type(entry.getValue())
+                                                                .name(entry.getKey())
+                                                                .build())
+                                                        .collect(Collectors.toList()));
+
                                                 return builder.build();
                                               })
                                               .collect(Collectors.toList()))

@@ -1,0 +1,86 @@
+domain User {
+	@GetOneBy
+	@Readonly
+	String username;
+	String email;
+	String passwordHash;
+	@Readonly
+	long registrationDate;
+	boolean isAdmin;
+
+	rest {
+		changeEmail(/me/email): PUT (String as newEmail) -> void;
+		changePassword(/me/password): PUT (String as newPassword) -> void;
+		usernameExists(/usernames/{String username}): GET () -> boolean;
+		createGoenna(/goennas): POST (GoennaRegistration) -> MeGoennaInfoView {
+			auth: false
+		}
+		createCompany(/companies): POST (CompanyRegistration) -> MeCompanyInfoView {
+			auth: false
+		}
+		deleteMe(/me): DELETE () -> void;
+		delete(/{long id}): DELETE () -> void;
+	}
+}
+
+view CompanyRegistration {
+	String username;
+	String password;
+	String email;
+	CompanyInfoCreateView info;
+}
+
+view GoennaRegistration {
+	String username;
+	String password;
+	String email;
+	GoennaInfoCreateView info;
+}
+
+view GoennaInfoCreateView {
+	String firstName;
+	String lastName;
+	String profilePicture;
+}
+
+domain GoennaInfo {
+	@OneToOne
+	User user;
+	String firstName;
+	String lastName;
+	@Text
+	String profilePicture;
+	@ManyToMany
+	List<Reward> rewards;
+
+	rest {
+		getMe(/me): GET () -> MeGoennaInfoView;
+		update(/): PUT (GoennaInfoUpdateView) -> MeGoennaInfoView;
+		getGlobalCount(/global/count): GET () -> long {
+			auth: false
+		}
+	}
+}
+
+view GoennaInfoUpdateView {
+	String firstName;
+	String lastName;
+	String profilePicture;
+}
+
+view MeGoennaInfoView from User as u, GoennaInfo as ui {
+	u.id;
+	u.username;
+	u.email;
+	ui.firstName;
+	ui.lastName;
+	ui.profilePicture;
+}
+
+view MeCompanyInfoView from User as u, CompanyInfo as ci {
+	u.id;
+	u.username;
+	u.email;
+	ci.name;
+	ci.profilePicture;
+}

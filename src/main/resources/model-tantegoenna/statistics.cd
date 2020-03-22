@@ -1,0 +1,19 @@
+@NoDAO
+domain CompanyStatistics {
+
+	long companyInfoId;
+	@ElementCollection
+	List<Integer> nextMonthsTotals;
+	@ElementCollection
+	List<Integer> nextMonthsPercentages;
+	boolean onetime;
+
+	rest {
+		getForCompany(/companies/{long id}): GET () -> CompanyStatistics;
+		getForPostalCode(/postalCodes/{String postalCode}): GET () -> PostalCodeStatistics;
+	}
+}
+
+view PostalCodeStatistics {
+	List<Integer> nextMonthsTotals;
+}

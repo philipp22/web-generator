@@ -31,7 +31,8 @@ public class DAOTrafo {
             .forEach(domain -> {
               var imports = ImportUtil.getDefaultImports();
               imports.add(ImportPaths.getDomainImport(settings.getBasePackage(Targets.BACKEND)));
-              imports.add(ImportPaths.getRTEImport());
+              imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.*");
+              imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.exceptions.*");
               imports.add("org.springframework.data.jpa.repository.JpaRepository");
 
               var name = domain.getName() + "DAO";
@@ -50,7 +51,7 @@ public class DAOTrafo {
   }
 
   private List<CDMethod> createGetByMethods(RawDomain domain, RawDomains domains) {
-    return domain.getAttributes().stream()
+    var res = domain.getAttributes().stream()
             .filter(attr -> TrafoUtils.hasAnnotation(attr, "GetOneBy"))
             .map(attr -> {
               var name = StringUtil.firstUpper(attr.getName());
@@ -69,5 +70,24 @@ public class DAOTrafo {
                       .build();
             })
             .collect(Collectors.toList());
+
+    res.addAll(domain.getAttributes().stream()
+            .filter(attr -> TrafoUtils.hasAnnotation(attr, "GetAllBy"))
+            .map(attr -> {
+              var name = StringUtil.firstUpper(attr.getName());
+              var type = attr.getType();
+
+              return new CDMethodBuilder()
+                      .name("findBy" + name)
+                      .returnType("List<" + domain.getName() + ">")
+                      .addArgument(new CDArgumentBuilder()
+                              .type(type)
+                              .name(attr.getName())
+                              .build())
+                      .build();
+            })
+            .collect(Collectors.toList()));
+
+    return res;
   }
 }

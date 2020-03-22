@@ -27,7 +27,8 @@ public class DomainTrafo {
   @Transform
   public void transform(RawDomains domains, WebElements elements, GeneratorSettings settings) {
     var imports = ImportUtil.getDefaultImports();
-    imports.add(ImportPaths.getRTEImport());
+    imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.*");
+    imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.exceptions.*");
     imports.add("javax.persistence.*");
     imports.add("org.hibernate.annotations.Type");
 
@@ -58,7 +59,7 @@ public class DomainTrafo {
             .addMethods(domain.getAttributes().stream()
                     .map(MethodUtil::createSetter)
                     .collect(Collectors.toList()))
-            .addMethod(createMergeMethod(domain, domains))
+//            .addMethod(createMergeMethod(domain, domains))
             .addConstructor(createConstructor(domain))
             .addConstructor(new CDConstructorBuilder()
                     .addModifier("protected")

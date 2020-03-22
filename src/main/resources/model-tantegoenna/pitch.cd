@@ -1,0 +1,14 @@
+domain CompanyPitch {
+	@Text
+	String summary;
+	@Text
+	String motivation;
+	@ElementCollection
+	List<String> pictures;
+
+	rest {
+		get(/{long id}): GET () -> CompanyPitch {
+			auth: false
+		}
+	}
+}

@@ -30,11 +30,11 @@ public class RestTrafo {
     imports.add("javax.transaction.*");
     imports.add("org.springframework.web.bind.annotation.*");
     imports.add("org.springframework.beans.factory.annotation.Autowired");
-    imports.add("com.philipp_kehrbusch.web.rte.*");
-    imports.add("com.philipp_kehrbusch.web.rte.exceptions.*");
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".bl.*");
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".view.*");
     imports.add(settings.getBasePackage(Targets.BACKEND) + ".domain.*");
+    imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.*");
+    imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.exceptions.*");
 
     domains.stream()
             .filter(domain -> !TrafoUtils.hasAnnotation(domain, "NoRest"))

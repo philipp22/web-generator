@@ -1,0 +1,97 @@
+domain CompanyInfo {
+	@OneToOne
+	User user;
+	String name;
+	@OneToOne
+	Address address;
+	@OneToOne
+	Person contactPerson;
+	@OneToOne
+	CompanyPitch pitch;
+	@OneToMany
+	List<SupportLevel> supportLevels;
+	@OneToOne
+	Goal goal;
+	@Text
+	String profilePicture;
+	boolean active;
+	@Text
+	String remainingServices;
+
+	rest {
+		getAll(/): GET () -> List<CompanyInfoView> {
+			queryParams: [
+				Integer page,
+				Integer count
+			]
+			auth: false
+		}
+		getAllByPostalCode(/postalCodes/{String postalCode}): GET () -> List<CompanyInfoView> {
+			auth: false
+		}
+		get(/{long id}): GET () -> CompanyInfoView {
+			auth: false
+		}
+		getGlobalCount(/global/count): GET () -> long {
+			auth: false
+		}
+		setStatus(/{long id}/activated): PUT (boolean as activated) -> void;
+	}
+}
+
+@NoBL
+@NoRest
+domain Address {
+	double lon;
+	double lat;
+	String street;
+	String houseNo;
+	String postalCode;
+	String town;
+	String addition;
+}
+
+@NoBL
+@NoRest
+domain Person {
+	String firstName;
+	String lastName;
+	String email;
+}
+
+domain CompanyCategory {
+	@GetOneBy
+	String name;
+
+	rest {
+		getAll(/): GET () -> List<CompanyCategory> {
+			auth: false
+		}
+		getByName(/names/{String name}): GET () -> CompanyCategory {
+			auth: false
+		}
+	}
+}
+
+view CompanyInfoCreateView {
+	String name;
+	Address address;
+	CompanyPitch pitch;
+	Goal goal;
+	List<SupportLevelCreateView> supportLevels;
+	String profilePicture;
+	boolean active;
+	Person contactPerson;
+	String remainingServices;
+}
+
+view CompanyInfoView from CompanyInfo as ci {
+	ci.id;
+	ci.name;
+	ci.address;
+	ci.pitch.id as pitchId;
+	ci.supportLevels.id as supportLevelIds;
+	ci.profilePicture;
+	ci.active;
+	ci.remainingServices;
+}

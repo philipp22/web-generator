@@ -60,8 +60,9 @@ public class ViewTrafo {
     for (var view : views) {
 
       var imports = ImportUtil.getDefaultImports();
-      imports.add(ImportPaths.getRTEImport());
       imports.add(settings.getBasePackage(Targets.BACKEND) + ".domain.*");
+      imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.*");
+      imports.add(settings.getBasePackage(Targets.BACKEND) + ".rte.exceptions.*");
 
       var name = view.getName();
       var builder = new CDClassBuilder()

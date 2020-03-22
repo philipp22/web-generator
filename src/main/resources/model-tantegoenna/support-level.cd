@@ -1,0 +1,22 @@
+domain SupportLevel {
+	String title;
+	int amount;
+	@OneToOne
+	Reward reward;
+}
+
+domain Reward {
+	@Text
+	String description;
+	boolean active;
+}
+
+view SupportLevelCreateView {
+	String title;
+	int amount;
+	RewardCreateView reward;
+}
+
+view RewardCreateView {
+	String description;
+}

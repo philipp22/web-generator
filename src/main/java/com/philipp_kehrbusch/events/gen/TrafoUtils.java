@@ -76,7 +76,7 @@ public class TrafoUtils {
 
   public static String getPrimitiveType(String type) {
     String regex = "List<(.*)>";
-    return type.replaceAll(regex, "$1");
+    return type.replaceAll(regex, "$1").replace("[]", "");
   }
 
   public static String appendToPrimitiveType(String type, String prefix, String suffix) {
